@@ -14,9 +14,11 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+# bparts_assistant/urls.py
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include          # Import include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', include('assistant_app.urls')),  # Include assistant_app urls
 ]
