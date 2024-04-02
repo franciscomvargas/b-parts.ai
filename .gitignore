@@ -1,5 +1,6 @@
 # Developer Files
 env/
+developer-eggs/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
