@@ -5,12 +5,12 @@ Developing an AI assistant dedicated to motorized vehicles using Django.
 
 1. **Setting up Django**: Create a new Django project using the command:
     ```
-    django-admin startproject vehicle_assistant
+    django-admin startproject bparts_assistant
     ```
 
 2. **Create Django App**: You should create a Django app within your project to contain the logic related to the AI assistant. You can do this using the command:
     ```
-    python manage.py startapp assistant
+    python manage.py startapp assistant_app
     ```
 
 3. **Integrate OpenAI API**: You can start by integrating the OpenAI API within your Django app to enable the AI capabilities. Check [OpenAI documentation](https://platform.openai.com/docs/api-reference) to understand how to make API requests and handle responses.
