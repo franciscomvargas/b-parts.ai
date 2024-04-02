@@ -4,6 +4,6 @@ from .views import chat_view
 from .views import hello_world
 
 urlpatterns = [
-    path('assistant/', chat_view, name='chat'),  # URL pattern for the chat view
+    path('', chat_view, name='chat'),  # URL pattern for the chat view
     path('hello/', hello_world, name='hello'),
 ]
