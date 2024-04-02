@@ -1,17 +1,41 @@
-<!-- chat.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat Assistant</title>
+    <title>B-Parts.AI SOTA Assistant </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/><link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'assistant_app/style.css' %}">
 </head>
 <body>
-    <h1>Chat Assistant</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Send</button>
-    </form>
+<!-- partial:index.partial.html -->
+<div class="floating-chat">
+    <i class="fa fa-comments" aria-hidden="true"></i>
+    <div class="chat">
+        <div class="header">
+            <span class="title">
+                what's on your mind?
+            </span>
+            <button>
+                <i class="fa fa-times" aria-hidden="true"></i>
+            </button>
+                         
+        </div>
+        <ul class="messages">
+            <!-- Messages will be dynamically appended here -->
+        </ul>
+        <div class="footer">
+            <div class="text-box" contenteditable="true" disabled="true"></div>
+            <button id="sendMessage">
+                {% load static %}
+                <img src="{% static 'assistant_app/icon-send.png' %}" width="20px"></img>
+            </button>
+        </div>
+    </div>
+</div>
+<!-- partial -->
+{% load static %}
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script><script  src="{% static 'assistant_app/script.js' %}"></script>
+
 </body>
 </html>

@@ -17,8 +17,11 @@ Including another URLconf
 # bparts_assistant/urls.py
 from django.contrib import admin
 from django.urls import path, include          # Import include
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('assistant_app.urls')),  # Include assistant_app urls
 ]
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
