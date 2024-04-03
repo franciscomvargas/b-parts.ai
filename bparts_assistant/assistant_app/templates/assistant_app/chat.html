@@ -2,40 +2,38 @@
 <html lang="en" >
 <head>
     <meta charset="UTF-8">
-    <title>B-Parts.AI SOTA Assistant </title>
+    <link rel="icon" type="image/png" href="https://d3gyav1z8tc4ee.cloudfront.net/app/1/img/favicon.ico">
+    <title>
+        B-Parts | Peças Auto Usadas, Originais e com Garantia
+    </title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/><link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'>
     {% load static %}
     <link rel="stylesheet" href="{% static 'assistant_app/style.css' %}">
 </head>
 <body>
-<!-- partial:index.partial.html -->
-<div class="floating-chat">
-    <i class="fa fa-comments" aria-hidden="true"></i>
-    <div class="chat">
-        <div class="header">
-            <span class="title">
-                what's on your mind?
-            </span>
-            <button>
-                <i class="fa fa-times" aria-hidden="true"></i>
-            </button>
-                         
-        </div>
-        <ul class="messages">
-            <!-- Messages will be dynamically appended here -->
-        </ul>
-        <div class="footer">
-            <div class="text-box" contenteditable="true" disabled="true"></div>
-            <button id="sendMessage">
-                {% load static %}
-                <img src="{% static 'assistant_app/icon-send.png' %}" width="20px"></img>
-            </button>
+    <div class="floating-chat">
+        <i class="fa fa-comments" aria-hidden="true"></i>
+        <div class="chat">
+            <div class="header">
+                <span class="title">
+                    🤖 talk with me 🧰
+                </span>
+                <button>
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </button>
+            </div>
+            <ul class="messages">
+                <!-- Messages will be dynamically appended here -->
+            </ul>
+            <div class="footer">
+                <div class="text-box" contenteditable="true" disabled="true"></div>
+                <button id="sendMessage">
+                    <img src="{% static 'assistant_app/icon-send.png' %}" width="20px"></img>
+                </button>
+            </div>
         </div>
     </div>
-</div>
-<!-- partial -->
-{% load static %}
-<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script><script  src="{% static 'assistant_app/script.js' %}"></script>
-
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script>
+    <script  src="{% static 'assistant_app/script.js' %}"></script>
 </body>
 </html>
