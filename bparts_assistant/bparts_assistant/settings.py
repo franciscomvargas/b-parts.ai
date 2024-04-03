@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'assistant_app',  # Add your app here
+    'sslserver',        # https://stackoverflow.com/a/59747796 >> https://github.com/teddziuba/django-sslserver?tab=readme-ov-file#getting-started
+    'assistant_app',    # Add your app here
 ]
 
 MIDDLEWARE = [
