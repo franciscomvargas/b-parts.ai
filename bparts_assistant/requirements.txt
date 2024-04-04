@@ -1,0 +1,4 @@
+Django
+django-sslserver
+openai
+mysqlclient
