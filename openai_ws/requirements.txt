@@ -1,0 +1,13 @@
+# ENV VARS
+pyyaml
+# AI ASSISTANT
+openai
+# DB ?
+mysql-connector-python
+# SERVER
+fastapi
+uvicorn[standard]
+python-multipart
+# WEBSOCKET
+websockets
+a2wsgi
