@@ -18,16 +18,23 @@
                 <span class="title">
                     🤖 talk with me 🧰
                 </span>
-                <button>
-                    <i class="fa fa-times" aria-hidden="true"></i>
+                <button title="close">
+                    <!-- <i class="fa fa-times" aria-hidden="true"></i> -->
+                    👋
                 </button>
             </div>
             <ul class="messages">
+                <li class="other">
+                    I'm the B-Parts AI assistent. Let me gide you through your Parts search!
+                </li>
+                <li class="other">
+                    <code>I'm here to help C:</code>
+                </li>
                 <!-- Messages will be dynamically appended here -->
             </ul>
             <div class="footer">
                 <div class="text-box" contenteditable="true" disabled="true"></div>
-                <button id="sendMessage">
+                <button id="sendMessage" title="send">
                     <img src="{% static 'assistant_app/icon-send.png' %}" width="20px"></img>
                 </button>
             </div>
