@@ -2,6 +2,7 @@
 env/
 developer-eggs/
 config.yaml
+*_initial.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
