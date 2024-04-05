@@ -1,4 +1,3 @@
-### 💀💀💀 REMOVE SECRETS 💀💀💀
 # System imports
 import os, json
 
@@ -83,8 +82,7 @@ mydb = mysql.connector.connect(
 
 
 mycursor = mydb.cursor()
-ASS_TABLE = ENV_VARS['user_assistant_tab']
-ASS_THREADS = ENV_VARS['assistant_threads_tab']
+ASS_THREADS = ENV_VARS['chat_tab']
 
 DEV_THREAD = ENV_VARS['dev_thread_id']
 
@@ -100,10 +98,9 @@ sync_client = openai.OpenAI(api_key=OPENAI_KEY)
 
 
 def thread_exists(customer_id):
-    sql = "SELECT thread_id FROM %s WHERE customer_id = %s AND assistant_id = %s"
-    
+    sql = f"SELECT thread_id FROM {ASS_THREADS} WHERE customer_id = %s"
     # Execute the query
-    mycursor.execute(sql, (ASS_THREADS, customer_id, DEV_THREAD))
+    mycursor.execute(sql, (customer_id, ))
     # Fetch one row
     result = mycursor.fetchone()
     # Check if result is not None (thread exists)
@@ -114,29 +111,25 @@ def thread_exists(customer_id):
     
 def create_thread(customer_id):
     # Assuming empty_thread is created with your provided method
-    empty_thread = sync_client.beta.threads.create()
+    empty_thread_id = sync_client.beta.threads.create().id
     #threadjson = empty_thread.model_dump_json()
     
     # Insert the thread information into the database
-    sql = "INSERT INTO %s (assistant_id, thread_id, customer_id, hash) VALUES (%s, %s, %s, %s)"
-    val = (ASS_THREADS, DEV_THREAD, str(empty_thread.id), str(customer_id), "")  # You can modify the values as needed
+    sql = f"INSERT INTO {ASS_THREADS} (chat_id, customer_id, thread_id) VALUES (NULL, %s, %s);"
+    val = (str(customer_id), str(empty_thread_id))  # You can modify the values as needed
     
     mycursor.execute(sql, val)
     mydb.commit()  # Commit the changes to the database
     
     #print("Created thread and saved to DB:", threadjson)
     
-    return empty_thread.id  # Return the thread ID
-
-
+    return empty_thread_id  # Return the thread ID
 
 
 async def get_ai_response(thread: str) -> AsyncGenerator[str, None]:
     """
     OpenAI Response
     """
-
-    
     all_content = ""
     async with openai.AsyncClient(api_key=OPENAI_KEY) as client:
         async with client.beta.threads.runs.create_and_stream(
@@ -163,124 +156,34 @@ async def get_ai_response(thread: str) -> AsyncGenerator[str, None]:
                 #print(message)
                 #yield str(message.event)
 
-def create_assistant(instructions, name, tools, model):
-    assistant = client.beta.assistants.create(
-        instructions=instructions,
-        name=name,
-        tools=tools,
-        model=model
-    )
-    return assistant
-
-@app.get("/create", response_class=HTMLResponse)
-async def web_app(request: Request):
-    form = """
-    <html>
-    <head>
-    <title>Create assistant</title>
-    </head>
-    <body>
-    
-    <h2> <a href='./'> Home </a> | Create assistant: </h2>
-    <form method="post" action='./create' >
-        <label for="instructions">Instructions:</label><br>
-        <input type="text" id="instructions" name="instructions" placeholder="You are a helpful coding instructor..."><br>
-        <label for="name">Name:</label><br>
-        <input type="text" id="name" name="name" placeholder="Coding assistant"><br>
-        <label for="tools">Tools:</label><br>
-        <input type="text" id="tools" name="tools" placeholder='[{ "type":"code_interpreter" }]'><br>
-        <label for="model">Model:</label><br>
-        <input type="text" id="model" name="model" placeholder="gpt-4"><br>
-        <input type="submit" value="Create Assistant">
-    </form>
-    </body>
-    </html>
-    """
-    return HTMLResponse(content=form, status_code=200)
-
-
-@app.post("/create", response_class=HTMLResponse)
-async def submit(instructions: str = Form(...), name: str = Form(...), tools: str = Form(...), model: str = Form(...), files: Optional[List[UploadFile]] = File(None)):
-
-    assistant = sync_client.beta.assistants.create(
-        instructions=instructions,
-        name=name,
-        tools=[{"type":"retrieval"}],
-        model=model
-    )
-    
-    sql = "INSERT INTO %s (assistant_id, assistant_active, assistant_meta) VALUES (%s, 1, %s)"
-    val = (ASS_TABLE, assistant.id, assistant.model_dump_json())
-    mycursor.execute(sql, val)
-
-    mydb.commit()
-
-    html_response = """
-    <html>
-    <head>
-    <title>Assistant created</title>
-    </head>
-    <body>
-    <h2>Assistant Created!</h2>
-    <p><strong>Instructions:</strong> {}</p>
-    <p><strong>Name:</strong> {}</p>
-    <p><strong>Tools:</strong> {}</p>
-    <p><strong>Model:</strong> {}</p>
-    </body>
-    </html>
-    """.format(instructions, name, tools, model)
-
-    return HTMLResponse(content=html_response, status_code=200)
-    
-
-@app.get("/")
-async def web_app() -> HTMLResponse:
-#    """
-#    Web App
-#    """
-
-    mycursor.execute(f"SELECT * FROM {ASS_TABLE}")
-
-    myresult = mycursor.fetchall()
-    assI = 0
-    for x in myresult:
-        assI+=1 
-    if not assI:    
-        return HTMLResponse("<html> HI <a href='./create'> Create your assistant </a> </html>")
-    else:
-        return HTMLResponse(f"<html><head><title>Assistant Admin</title><body><a href='./create'>Add new</a> | List of Assistants: </h2> <p>{assI}</p></body></html>")
-
 @app.websocket("/")
 async def websocket_endpoint(websocket: WebSocket) -> NoReturn:
     """
     Websocket for AI responses
     """
     await websocket.accept()
-    while True:
-        message = await websocket.receive_text()
+    try:
+        while True:
+            message = await websocket.receive_text()
 
-        customer = message.split("|")[0].strip()
-        if not customer:
-           customer = 0 
-        thread = thread_exists(customer)
-        if thread:
-            msg = message.split("|")[1].strip()
-        else:
-            thread = create_thread(customer)
-            msg = message.split("|")[1].strip()
-        
-        if thread:
 
-            savedmsg = await client.beta.threads.messages.create(
-                thread,
-                role="user",
-                content=msg,
-            )
+            customer, msg = message.split("|", 1)
+            customer = customer.strip()
+            thread = thread_exists(customer)
+            if not thread:
+                thread = create_thread(customer)
 
- 
+            if thread:
+                saved_msg = await client.beta.threads.messages.create(
+                    thread,
+                    role="user",
+                    content=msg.strip(),
+                )
 
-        async for text in get_ai_response(thread):
-            await websocket.send_text(text)
+            async for text in get_ai_response(thread):
+                await websocket.send_text(text)
+    except WebSocketDisconnect:
+        pass  # Handle disconnection gracefully
 
 
 @app.get("/chatapi")
