@@ -1,9 +1,4 @@
 var element = $('.floating-chat');
-var myStorage = localStorage;
-
-if (!myStorage.getItem('chatID')) {
-    myStorage.setItem('chatID', createUUID());
-}
 
 setTimeout(function() {
     element.addClass('enter');
@@ -38,6 +33,36 @@ function closeElement() {
     }, 500);
 }
 
+
+// 👇 WEBSOCKET UTILS BELLOW 👇
+const socket = new WebSocket("ws://localhost:9000");
+var msgI = 0
+// Event listener for connection open
+socket.addEventListener('open', (event) => {
+    console.log('WebSocket connection opened');
+});
+// Event listener for connection close
+socket.addEventListener('close', (event) => {
+    console.log('WebSocket connection closed'); 
+});
+// Event listener for connection errors
+socket.addEventListener('error', (event) => {
+    console.error('WebSocket error:', event.error);
+});
+
+// Event listener for receiving messages
+var curr_msg_id = 0
+socket.addEventListener('message', (event) => {
+    const message = event.data;
+    displayMessage(message);
+});
+function displayMessage(message) {
+    console.log(message)
+    document.getElementById('msg'+msgI).innerHTML=message
+}
+// 👆 WEBSOCKET UTILS ABOVE  👆
+
+
 function createUUID() {
     // http://www.ietf.org/rfc/rfc4122.txt
     var s = [];
@@ -52,6 +77,7 @@ function createUUID() {
     var uuid = s.join("");
     return uuid;
 }
+const CLIENT_ID = createUUID()
 
 function sendNewMessage() {
     var userInput = $('.text-box');
@@ -71,6 +97,23 @@ function sendNewMessage() {
     userInput.html('');
     // focus on input
     userInput.focus();
+
+    messagesContainer.finish().animate({
+        scrollTop: messagesContainer.prop("scrollHeight")
+    }, 250);
+
+
+    // 👇 WEBSOCKET LOGIC BELLOW 👇
+    socket.send(CLIENT_ID+"|"+newMessage);
+    msgI++;
+    // Placeholder for WebSocket result UI update
+    messagesContainer.append([
+        '<li class="other" id=msg'+msgI+'>',
+        'Awaiting response...', // Placeholder until WebSocket response is received
+        '</li>'
+    ].join(''));
+    // 👆 WEBSOCKET LOGIC ABOVE  👆
+
 
     messagesContainer.finish().animate({
         scrollTop: messagesContainer.prop("scrollHeight")
