@@ -27,13 +27,7 @@ These commands will create the necessary database migrations based on your model
 Now, your models are synchronized with your database, and you can start using them in your Django project.
 '''
 
-class Assistant_Table(models.Model):
-    assistant_id = models.AutoField(primary_key=True)
-    assistant_active = models.JSONField(default=str)
-    assistant_meta = models.JSONField(default=str)
-
-class AssThreads_Table(models.Model):
-    thread_id = models.AutoField(primary_key=True)
-    assistant_id = models.ForeignKey('Assistant_Table', on_delete=models.CASCADE)
-    customer_id = models.JSONField(default=str)
-    hash = models.JSONField(default=str)
+class Chat_Table(models.Model):
+    chat_id = models.AutoField(primary_key=True)
+    customer_id = models.TextField(default=str)
+    thread_id = models.TextField(default=str)
